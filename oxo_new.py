@@ -106,7 +106,7 @@ def iteration(inumber):
       c = check_game(OXO)
       r = c > 0
       
-      a = np.append(OXOc, [mark, y, c, inumber])
+      a = np.append(OXOc, [mark, c, y])
       
       data_game.append(a)
       if r:
@@ -114,7 +114,7 @@ def iteration(inumber):
         
   for q in data_game:
     if q[9] == mark or c == 1 :
-      q[11] = c
+      q[-2] = c
 
   return data_game
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
   Q = []
 
-  for i in range(1000):
+  for i in range(10000):
     data_game = iteration(i)  
           
     for g in data_game:      

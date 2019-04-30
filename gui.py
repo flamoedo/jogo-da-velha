@@ -22,5 +22,8 @@ while True:                 # Event Loop
   if event == 'Show':  
       # change the "output" element to be the value of "input" element  
       window.FindElement('_OUTPUT_').Update(values['_IN_'])
+  if event != '':
+      window.FindElement(event).Update(' X ')
+
 
 window.Close()
