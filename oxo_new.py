@@ -92,6 +92,65 @@ def play_game(game, mark):
       game[col] = mark
       return col
 
+def iteration_bk(inumber):
+  OXO = np.array(['','','','','','','','',''])
+
+  q_table = np.zeros((3,3,3,3,3,3,3,3,3,2,9))
+
+  data_game = []
+
+  r = False
+
+  while(not r):
+    for mark in ('X', 'O'):
+      OXOc = OXO.copy()
+      y = play_game(OXO, mark)
+      c = check_game(OXO)
+      r = c > 0
+      
+      a = np.append(OXOc, [mark, y, c, inumber])
+
+      data_game.append(a)
+
+      OXOc[OXOc == ''] = 0
+      OXOc[OXOc == 'X'] = 2
+      OXOc[OXOc == 'O'] = 1
+
+      a0 = OXOc[0].astype(int)
+      a1 = OXOc[1].astype(int)
+      a2 = OXOc[2].astype(int)
+      a3 = OXOc[3].astype(int)
+      a4 = OXOc[4].astype(int)
+      a5 = OXOc[5].astype(int)
+      a6 = OXOc[6].astype(int)
+      a7 = OXOc[7].astype(int)
+      a8 = OXOc[8].astype(int)
+
+      if mark == 'X':
+        m = 1
+      else:
+        m = 0
+
+      q_table[a0, a1, a2, a3, a4, a5, a6, a7, a8, m, y] = c
+      
+      # data_game.append(a)
+      if r:
+        if c == 2:
+          q_table[ :, :, :, :, :, :, :, :, :, m, :] = q_table[ :, :, :, :, :, :, :, :, :, m, :] + c
+        else:
+          if c == 1:
+            q_table[ :, :, :, :, :, :, :, :, :, :, :] = q_table[ :, :, :, :, :, :, :, :, :, :, :] + c
+
+        Q = np.append(Q, q_table)
+
+
+        break        
+        
+
+  return data_game
+
+
+
 def iteration(inumber):
   OXO = np.array(['','','','','','','','',''])
 
@@ -120,15 +179,38 @@ def iteration(inumber):
 
 if __name__ == "__main__":    
 
-  Q = []
+  # Q = []
 
-  for i in range(10000):
+  q_table = np.zeros((3,3,3,3,3,3,3,3,3,2,9))
+
+
+  for i in range(10):
     data_game = iteration(i)  
           
-    for g in data_game:      
-      Q.append(g)
+    for g in data_game:
 
+      g[g == ''] = 0
+      g[g == 'X'] = 2
+      g[g == 'O'] = 1
 
-  pd.DataFrame(Q).to_csv('Q_table.csv')
+      a0 = g[0].astype(int)
+      a1 = g[1].astype(int)
+      a2 = g[2].astype(int)
+      a3 = g[3].astype(int)
+      a4 = g[4].astype(int)
+      a5 = g[5].astype(int)
+      a6 = g[6].astype(int)
+      a7 = g[7].astype(int)
+      a8 = g[8].astype(int)
+
+      m = g[9].astype(int) - 1
+
+      y = g[10].astype(int)
+
+      c = g[11].astype(int)
+
+      q_table[a0, a1, a2, a3, a4, a5, a6, a7, a8, m, y] = q_table[a0, a1, a2, a3, a4, a5, a6, a7, a8, m, y] + c
+
+np.save('q_table', q_table)
 
 
