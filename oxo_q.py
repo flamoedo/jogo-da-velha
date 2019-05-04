@@ -13,7 +13,7 @@ import pandas as pd
 
 def check_lin(game):
   game = game.reshape(3,3)
-  for mark in ['O','X']:
+  for mark in [1,2]:
     for lin in range(3):  
       if (game == mark)[lin,].sum() == 3:
         return 2
@@ -22,7 +22,7 @@ def check_lin(game):
 
 def check_col(game):
   game = game.reshape(3,3)
-  for mark in ['O','X']:
+  for mark in [1,2]:
     for col in range(3):  
       if (game == mark)[:,col].sum() == 3:
         return 2
@@ -31,29 +31,27 @@ def check_col(game):
 
 def check_diag1(game):  
   game = game.reshape(3,3)
-  for mark in ('O','X'):
+  for mark in (1,2):
     s = 0
     for lin in range(3):  
       s += (game == mark)[lin,lin]
-  if s == 3:
-      return 2
-  else:
-      return 0
+    if s == 3:
+        return 2
+  return 0
 
 def check_diag2(game):
   game = game.reshape(3,3)
-  for mark in ['O','X']:
+  for mark in [1,2]:
     s = 0
     for lin in range(3):  
       s += (game == mark)[2-lin,lin]
-  if s == 3:
-      return 2
-  else:
-      return 0
+    if s == 3:
+        return 2
+  return 0
 
 def check_tied(game):
   game = game.reshape(3,3)
-  if (game != '').sum() == 9:
+  if (game != 0).sum() == 9:
     return 1
   else:
     return 0
@@ -88,29 +86,30 @@ def play_game(game, mark):
   
     col = random.randint(0,8)
 
-    if game[col] == '':      
+    if game[col] == 0:      
       game[col] = mark
       return col
 
 
 def iteration(inumber):
-  OXO = np.array(['','','','','','','','',''])
+  OXO = np.zeros(9)
 
   data_game = []
 
-  r = False
+  p = False
 
-  while(not r):
-    for mark in ('X', 'O'):
+  while(not p):
+    for mark in (1, 2):
       OXOc = OXO.copy()
+
       y = play_game(OXO, mark)
-      c = check_game(OXO)
-      r = c > 0
+      r = check_game(OXO)
+      p = r > 0
       
       a = np.append(OXOc, [mark, y, c])
       
       data_game.append(a)
-      if r:
+      if p:
         break        
         
   for q in data_game:
@@ -119,42 +118,6 @@ def iteration(inumber):
 
   return data_game
 
-if __name__ == "__main__":    
 
-  # Q = []
-
-  q_table = np.zeros((3,3,3,3,3,3,3,3,3,9))
-
-
-  for i in range(10000):
-    data_game = iteration(i)  
-          
-    for g in data_game:
-
-      g[g == ''] = 0
-      g[g == 'X'] = 2
-      g[g == 'O'] = 1
-
-      a0 = g[0].astype(int)
-      a1 = g[1].astype(int)
-      a2 = g[2].astype(int)
-      a3 = g[3].astype(int)
-      a4 = g[4].astype(int)
-      a5 = g[5].astype(int)
-      a6 = g[6].astype(int)
-      a7 = g[7].astype(int)
-      a8 = g[8].astype(int)
-
-      m = g[9].astype(int) - 1
-
-      y = g[10].astype(int)
-
-      c = g[11].astype(int)
-
-      # print([a0, a1, a2, a3, a4, a5, a6, a7, a8, m, y, c])
-
-      q_table[a0, a1, a2, a3, a4, a5, a6, a7, a8, y] = q_table[a0, a1, a2, a3, a4, a5, a6, a7, a8, y] + (c / 5)
-
-np.save('q_table', q_table)
 
 
