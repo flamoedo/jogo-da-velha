@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 
 from oxo_q import play_game, check_game
@@ -49,7 +51,10 @@ def eps_greedy_q_learning_with_table(num_episodes=500):
 
 if __name__ == "__main__":    
 
-    q_table = eps_greedy_q_learning_with_table(5000)
+    if len(sys.argv) > 1:
+        q_table = eps_greedy_q_learning_with_table(int(sys.argv[1]))
+    else:
+        q_table = eps_greedy_q_learning_with_table()
 
     np.save('q_table', q_table)
 
