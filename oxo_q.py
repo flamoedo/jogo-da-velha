@@ -11,6 +11,77 @@ import numpy as np
 import random
 import pandas as pd
 
+def play_lin(game, m):
+  game = game.reshape(3,3)
+  if m == 2:
+    m_ = 1
+  else:
+    m_ = 2
+  for mark in [m,m_]:
+    for lin in range(3):  
+      if (game == mark)[lin,].sum() == 2:
+        a = np.argmin(game[lin,:] == m)
+        if game[lin,a] == 0:
+          return lin * 3 + a
+
+  return -1
+
+
+def play_col(game,m):
+  game = game.reshape(3,3)
+  if m == 2:
+    m_ = 1
+  else:
+    m_ = 2
+  for mark in [m,m_]:
+    for col in range(3):  
+      if (game == mark)[:,col].sum() == 2:
+        a = np.argmin(game[:,col] == m)
+        if game[a,col] == 0:
+          return a * 3 + col
+    
+  return -1
+
+def play_diag1(game, m):  
+  game = game.reshape(3,3)
+  if m == 2:
+    m_ = 1
+  else:
+    m_ = 2
+
+  for mark in (m,m_):
+    s = 0
+    for lin in range(3):  
+      s += (game == mark)[lin,lin]
+    if s == 2:
+      for lin in range(3):
+        a = (game != m)[lin,lin]
+        if a:
+          if game[lin,lin] == 0:
+            return lin * 3 + lin
+  return -1
+
+def play_diag2(game, m):  
+  game = game.reshape(3,3)
+  if m == 2:
+    m_ = 1
+  else:
+    m_ = 2
+
+  for mark in (m,m_):
+    s = 0
+    for lin in range(3):  
+      s += (game == mark)[2 - lin,lin]
+    if s == 2:
+      for lin in range(3):
+        a = (game != m)[2 - lin,lin]
+        if a:
+          if game[2 - lin,lin] == 0:
+            return (2 - lin) * 3 + lin
+  return -1
+
+
+
 def check_lin(game):
   game = game.reshape(3,3)
   for mark in [1,2]:
@@ -82,6 +153,31 @@ def check_game(game):
 
 def play_game(game, mark):
   
+  al = play_lin(game, mark)
+
+  if al != -1:
+    game[al] = mark
+    return al
+
+  ac = play_col(game, mark)
+
+  if ac != -1:
+    game[ac] = mark
+    return ac
+
+  ad1 = play_diag1(game, mark)
+
+  if ad1 != -1:
+    game[ad1] = mark
+    return ad1
+
+  ad2 = play_diag2(game, mark)
+
+  if ad2 != -1:
+    game[ad2] = mark
+    return ad2
+
+
   while(True):
   
     col = random.randint(0,8)
